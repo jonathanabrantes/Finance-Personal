@@ -13,6 +13,17 @@ Um sistema completo de gerenciamento financeiro pessoal desenvolvido com Django,
   - Ativar/Desativar usuários
   - Excluir usuários (exceto próprio)
 
+### 💹 **Gestão de Investimentos**
+- **Dashboard de Investimentos** com visão geral completa
+- **Histórico de Investimentos** com tabela detalhada
+- **Histórico Temporal** com gráficos de evolução
+- **Sistema de Aportes** para adicionar valores aos investimentos
+- **Sistema de Rendimentos** para registrar variações percentuais
+- **Edição de Aportes** existentes com recálculo automático
+- **Filtros por tipo** e status de investimento
+- **Cálculo automático de ROI** e resultados
+- **Suporte a múltiplos tipos**: Ações, Renda Fixa, Criptomoedas, Imóveis
+
 ### 🎨 **Temas Visuais**
 - **Tema Noturno** como padrão (interface escura elegante)
 - **Tema Claro** alternativo (design branco minimalista)
@@ -39,6 +50,8 @@ Um sistema completo de gerenciamento financeiro pessoal desenvolvido com Django,
 - **React Router** - Roteamento de páginas
 - **Axios** - Cliente HTTP para APIs
 - **CSS Variables** - Sistema de temas dinâmicos
+- **Chart.js** - Gráficos para histórico temporal
+- **Responsive Design** - Interface adaptativa para todos os dispositivos
 
 ### **Infraestrutura**
 - **Docker** - Containerização de aplicações
@@ -188,6 +201,10 @@ Finance-Personal/
 ├── frontend/               # Aplicação React
 │   ├── src/
 │   │   ├── components/    # Componentes React
+│   │   │   ├── Dashboard.js      # Dashboard principal
+│   │   │   ├── Investments.js    # Gestão de investimentos
+│   │   │   ├── Users.js          # Gerenciamento de usuários
+│   │   │   └── Auth.js           # Componentes de autenticação
 │   │   ├── contexts/      # Contextos (Auth, Theme)
 │   │   └── App.js         # Componente principal
 │   └── package.json       # Dependências Node.js
@@ -307,7 +324,12 @@ O sistema é totalmente responsivo e funciona em:
 
 ## 🚀 **Próximas Funcionalidades**
 
-- [ ] **Dashboard Financeiro** com gráficos e estatísticas
+- [x] **Dashboard Financeiro** com gráficos e estatísticas ✅
+- [x] **Gestão de Investimentos** com histórico completo ✅
+- [x] **Sistema de Aportes** para investimentos ✅
+- [x] **Sistema de Rendimentos** percentuais ✅
+- [x] **Edição de Aportes** com recálculo automático ✅
+- [x] **Histórico Temporal** com gráficos ✅
 - [ ] **Gestão de Receitas e Despesas**
 - [ ] **Categorização de Transações**
 - [ ] **Relatórios Mensais/Anuais**
@@ -347,6 +369,10 @@ Para suporte e dúvidas:
 - **Gerenciamento de usuários** para administradores
 - **Autenticação segura** por sessões
 - **Interface responsiva** para todos os dispositivos
+- **Sistema completo de investimentos** com aportes e rendimentos
+- **Histórico temporal** com gráficos interativos
+- **Edição de aportes** com recálculo automático
+- **Dashboard financeiro** com estatísticas avançadas
 
 ### **Para começar agora:**
 ```bash
