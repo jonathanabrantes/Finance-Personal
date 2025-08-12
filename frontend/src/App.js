@@ -12,13 +12,21 @@ import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import './App.css';
 
 function ThemeSwitcher() {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme, getThemeInfo, themeVariant, toggleThemeVariant } = useTheme();
+  const themeInfo = getThemeInfo();
   
   return (
     <div className="theme-switcher">
-      <button className="theme-toggle" onClick={toggleTheme}>
-        {theme === 'light' ? '🌙 Modo Escuro' : '☀️ Modo Claro'}
-      </button>
+      <div className="theme-controls">
+        <button className="theme-toggle" onClick={toggleTheme}>
+          {theme === 'light' ? '🌙 Modo Escuro' : '☀️ Modo Claro'}
+        </button>
+        {themeVariant !== 'default' && (
+          <button className="theme-variant-toggle" onClick={toggleThemeVariant}>
+            🎨 {themeInfo.variant}
+          </button>
+        )}
+      </div>
     </div>
   );
 }
