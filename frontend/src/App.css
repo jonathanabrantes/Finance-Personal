@@ -475,6 +475,96 @@ body {
 }
 
 /* ========================================
+   GRÁFICO DE PIZZA - GASTOS POR CATEGORIA
+   ======================================== */
+
+.expenses-chart {
+  background: var(--card-bg);
+  border-radius: var(--border-radius-xl);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-normal);
+}
+
+.expenses-chart:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.pie-chart-container {
+  position: relative;
+}
+
+.pie-chart {
+  position: relative;
+  transition: var(--transition-normal);
+  box-shadow: var(--shadow-md);
+}
+
+.pie-chart:hover {
+  transform: scale(1.02);
+  box-shadow: var(--shadow-lg);
+}
+
+.pie-chart::before {
+  content: '';
+  position: absolute;
+  top: -5px;
+  left: -5px;
+  right: -5px;
+  bottom: -5px;
+  background: linear-gradient(45deg, var(--accent-color), var(--success-color));
+  border-radius: 50%;
+  z-index: -1;
+  opacity: 0.1;
+  transition: var(--transition-normal);
+}
+
+.pie-chart:hover::before {
+  opacity: 0.2;
+  transform: scale(1.05);
+}
+
+/* Responsividade para o gráfico de pizza */
+@media (max-width: 768px) {
+  .expenses-chart > div {
+    grid-template-columns: 1fr !important;
+    gap: var(--spacing-lg) !important;
+  }
+  
+  .pie-chart {
+    width: 250px !important;
+    height: 250px !important;
+  }
+  
+  .pie-chart > div {
+    width: 60px !important;
+    height: 60px !important;
+    font-size: 1rem !important;
+  }
+  
+  .chart-legend {
+    max-height: 250px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .pie-chart {
+    width: 200px !important;
+    height: 200px !important;
+  }
+  
+  .pie-chart > div {
+    width: 50px !important;
+    height: 50px !important;
+    font-size: 0.9rem !important;
+  }
+  
+  .expenses-chart h3 {
+    font-size: 1.2rem !important;
+  }
+}
+
+/* ========================================
    RESPONSIVIDADE
    ======================================== */
 

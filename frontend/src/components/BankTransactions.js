@@ -94,6 +94,45 @@ function BankTransactions() {
     loadData();
   }, [loadData]);
 
+  // Calcular dados para o gráfico de pizza de gastos por categoria
+  const getExpensesByCategory = () => {
+    if (!transactions || !categoryGroups) return [];
+    
+    // Filtrar apenas transações de despesa
+    const expenses = transactions.filter(t => t.transaction_type === 'expense');
+    
+    // Agrupar despesas por categoria
+    const expensesByCategory = {};
+    
+    expenses.forEach(expense => {
+      const category = categoryGroups.find(cg => cg.id === expense.category_group);
+      if (category) {
+        const categoryName = category.name;
+        if (expensesByCategory[categoryName]) {
+          expensesByCategory[categoryName] += parseFloat(expense.amount);
+        } else {
+          expensesByCategory[categoryName] = parseFloat(expense.amount);
+        }
+      }
+    });
+    
+    // Calcular total de despesas
+    const totalExpenses = Object.values(expensesByCategory).reduce((sum, amount) => sum + amount, 0);
+    
+    // Converter para array com percentuais e cores
+    const colors = [
+      '#FF6B6B', '#4ECDC4', '#45B7D1', '#96CEB4', '#FFEAA7',
+      '#DDA0DD', '#98D8C8', '#F7DC6F', '#BB8FCE', '#85C1E9'
+    ];
+    
+    return Object.entries(expensesByCategory).map(([category, amount], index) => ({
+      category,
+      amount,
+      percentage: totalExpenses > 0 ? (amount / totalExpenses) * 100 : 0,
+      color: colors[index % colors.length]
+    })).sort((a, b) => b.amount - a.amount); // Ordenar por valor decrescente
+  };
+
   // Adicionar nova transação
   const addTransaction = async (e) => {
     e.preventDefault();
@@ -230,6 +269,167 @@ function BankTransactions() {
             </div>
           </div>
         )}
+
+        {/* Gráfico de Pizza - Gastos por Categoria */}
+        {(() => {
+          const expensesData = getExpensesByCategory();
+          if (expensesData.length === 0) return null;
+          
+          return (
+            <div className="expenses-chart" style={{ 
+              background: 'var(--card-bg)', 
+              padding: 'var(--spacing-xl)', 
+              borderRadius: 'var(--border-radius-lg)', 
+              marginBottom: 'var(--spacing-xl)',
+              border: '1px solid var(--border-color)',
+              boxShadow: 'var(--shadow-sm)'
+            }}>
+              <h3 style={{ 
+                marginBottom: 'var(--spacing-lg)', 
+                color: 'var(--text-primary)',
+                textAlign: 'center',
+                fontSize: '1.5rem',
+                fontWeight: '600'
+              }}>
+                🥧 Gastos por Categoria - {new Date(selectedMonth + '-01').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
+              </h3>
+              
+              <div style={{ 
+                display: 'grid', 
+                gridTemplateColumns: '1fr 1fr', 
+                gap: 'var(--spacing-xl)',
+                alignItems: 'center'
+              }}>
+                {/* Gráfico de Pizza */}
+                <div className="pie-chart-container" style={{ textAlign: 'center' }}>
+                  <div className="pie-chart" style={{ 
+                    width: '300px', 
+                    height: '300px', 
+                    margin: '0 auto',
+                    position: 'relative',
+                    borderRadius: '50%',
+                    background: 'conic-gradient(' + 
+                      expensesData.map((item, index) => {
+                        const startAngle = expensesData
+                          .slice(0, index)
+                          .reduce((sum, _, i) => sum + (expensesData[i].percentage * 3.6), 0);
+                        const endAngle = startAngle + (item.percentage * 3.6);
+                        return `${item.color} ${startAngle}deg ${endAngle}deg`;
+                      }).join(', ') + 
+                    ')'
+                  }}>
+                    {/* Centro do gráfico */}
+                    <div style={{
+                      position: 'absolute',
+                      top: '50%',
+                      left: '50%',
+                      transform: 'translate(-50%, -50%)',
+                      width: '80px',
+                      height: '80px',
+                      background: 'var(--card-bg)',
+                      borderRadius: '50%',
+                      border: '3px solid var(--border-color)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      color: 'var(--text-primary)',
+                      fontWeight: 'bold',
+                      fontSize: '1.2rem'
+                    }}>
+                      {expensesData.length}
+                    </div>
+                  </div>
+                </div>
+                
+                {/* Legenda e Estatísticas */}
+                <div className="chart-legend">
+                  <div style={{ 
+                    display: 'grid', 
+                    gridTemplateColumns: '1fr', 
+                    gap: 'var(--spacing-sm)',
+                    maxHeight: '300px',
+                    overflowY: 'auto'
+                  }}>
+                    {expensesData.map((item, index) => (
+                      <div key={index} style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 'var(--spacing-sm)',
+                        padding: 'var(--spacing-sm)',
+                        background: 'var(--bg-secondary)',
+                        borderRadius: 'var(--border-radius-md)',
+                        border: '1px solid var(--border-color)',
+                        transition: 'var(--transition-normal)'
+                      }}>
+                        {/* Indicador de cor */}
+                        <div style={{
+                          width: '20px',
+                          height: '20px',
+                          backgroundColor: item.color,
+                          borderRadius: '50%',
+                          border: '2px solid var(--border-color)'
+                        }} />
+                        
+                        {/* Informações da categoria */}
+                        <div style={{ flex: 1 }}>
+                          <div style={{
+                            fontWeight: '600',
+                            color: 'var(--text-primary)',
+                            fontSize: '0.9rem'
+                          }}>
+                            {item.category}
+                          </div>
+                          <div style={{
+                            color: 'var(--text-secondary)',
+                            fontSize: '0.8rem'
+                          }}>
+                            {item.percentage.toFixed(1)}% • {formatCurrency(item.amount)}
+                          </div>
+                        </div>
+                        
+                        {/* Percentual destacado */}
+                        <div style={{
+                          fontWeight: 'bold',
+                          color: 'var(--text-primary)',
+                          fontSize: '1.1rem',
+                          minWidth: '50px',
+                          textAlign: 'right'
+                        }}>
+                          {item.percentage.toFixed(1)}%
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Total de despesas */}
+                  <div style={{
+                    marginTop: 'var(--spacing-lg)',
+                    padding: 'var(--spacing-md)',
+                    background: 'var(--accent-light)',
+                    borderRadius: 'var(--border-radius-md)',
+                    border: '2px solid var(--accent-color)',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      fontSize: '1.2rem',
+                      fontWeight: 'bold',
+                      color: 'var(--accent-color)'
+                    }}>
+                      Total de Despesas
+                    </div>
+                    <div style={{
+                      fontSize: '1.8rem',
+                      fontWeight: 'bold',
+                      color: 'var(--text-primary)'
+                    }}>
+                      {formatCurrency(expensesData.reduce((sum, item) => sum + item.amount, 0))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          );
+        })()}
 
         {/* Filtros */}
         <div className="filters" style={{ marginBottom: '30px' }}>
