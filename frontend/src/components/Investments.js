@@ -1,10 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState } from 'react';
 
 function Investments() {
-  const { currentUser } = useAuth();
   const [activeTab, setActiveTab] = useState('investments');
-  const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
@@ -898,8 +895,8 @@ function Investments() {
                 </div>
 
                 <div style={{ marginTop: '20px' }} className="form-actions">
-                  <button type="submit" className="btn btn-primary" disabled={loading}>
-                    {loading ? 'Adicionando...' : '➕ Adicionar Investimento'}
+                  <button type="submit" className="btn btn-primary">
+                    ➕ Adicionar Investimento
                   </button>
                 </div>
               </form>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../contexts/AuthContext';
 import axios from 'axios';
 
@@ -46,12 +46,8 @@ function BankTransactions() {
     return months;
   };
 
-  // Carregar dados iniciais
-  useEffect(() => {
-    loadData();
-  }, [selectedMonth, selectedAccount]);
-
-  const loadData = async () => {
+  // Carregar dados
+  const loadData = useCallback(async () => {
     try {
       setLoading(true);
       console.log('🔄 Iniciando carregamento de dados...');
@@ -91,7 +87,12 @@ function BankTransactions() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedMonth]);
+
+  // Carregar dados iniciais
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
   // Adicionar nova transação
   const addTransaction = async (e) => {
@@ -107,7 +108,7 @@ function BankTransactions() {
       setLoading(true);
       
       // Encontrar o grupo de categoria para determinar o tipo de transação
-      const categoryGroup = categoryGroups.find(g => g.id == newTransaction.category_group);
+      const categoryGroup = categoryGroups.find(g => g.id === newTransaction.category_group);
       const transactionData = {
         ...newTransaction,
         transaction_type: categoryGroup.transaction_type,
@@ -159,7 +160,7 @@ function BankTransactions() {
   // Filtrar transações por conta bancária
   const filteredTransactions = selectedAccount === 'all' 
     ? transactions 
-    : transactions.filter(t => t.bank_account == selectedAccount);
+    : transactions.filter(t => t.bank_account === selectedAccount);
 
   // Formatar valor monetário
   const formatCurrency = (value) => {
