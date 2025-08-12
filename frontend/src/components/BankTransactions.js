@@ -62,6 +62,11 @@ function BankTransactions() {
       console.log('🏷️ Carregando grupos de categorias...');
       const groupsResponse = await axios.get('/api/accounts/category-groups/');
       console.log('✅ Grupos de categorias carregados:', groupsResponse.data);
+      console.log('🔍 Estrutura dos grupos de categoria:', groupsResponse.data.map(g => ({
+        id: g.id,
+        name: g.name,
+        transaction_type: g.transaction_type
+      })));
       setCategoryGroups(groupsResponse.data);
       
       // Carregar transações do mês selecionado
@@ -137,9 +142,28 @@ function BankTransactions() {
   const addTransaction = async (e) => {
     e.preventDefault();
     
-    if (!newTransaction.bank_account || !newTransaction.category_group || 
-        !newTransaction.amount || !newTransaction.description) {
-      setError('Todos os campos são obrigatórios');
+    console.log('📝 Tentando adicionar transação:', newTransaction);
+    console.log('🏷️ Categorias disponíveis:', categoryGroups);
+    console.log('🏦 Contas disponíveis:', bankAccounts);
+    
+    // Validação dos campos
+    if (!newTransaction.bank_account) {
+      setError('Selecione uma conta bancária');
+      return;
+    }
+    
+    if (!newTransaction.category_group) {
+      setError('Selecione uma categoria');
+      return;
+    }
+    
+    if (!newTransaction.amount || parseFloat(newTransaction.amount) <= 0) {
+      setError('Valor deve ser maior que zero');
+      return;
+    }
+    
+    if (!newTransaction.description || newTransaction.description.trim() === '') {
+      setError('Descrição é obrigatória');
       return;
     }
 
@@ -147,13 +171,30 @@ function BankTransactions() {
       setLoading(true);
       
       // Encontrar o grupo de categoria para determinar o tipo de transação
-      const categoryGroup = categoryGroups.find(g => g.id === newTransaction.category_group);
+      const categoryGroup = categoryGroups.find(g => g.id === parseInt(newTransaction.category_group));
+      
+      console.log('🔍 Categoria encontrada:', categoryGroup);
+      
+      if (!categoryGroup) {
+        setError('Categoria não encontrada. Tente novamente.');
+        return;
+      }
+      
+      if (!categoryGroup.transaction_type) {
+        setError('Categoria sem tipo de transação definido');
+        return;
+      }
+      
       const transactionData = {
         ...newTransaction,
         transaction_type: categoryGroup.transaction_type,
-        amount: parseFloat(newTransaction.amount)
+        amount: parseFloat(newTransaction.amount),
+        category_group: parseInt(newTransaction.category_group),
+        bank_account: parseInt(newTransaction.bank_account)
       };
 
+      console.log('📤 Enviando transação:', transactionData);
+      
       await axios.post('/api/accounts/transactions/', transactionData);
       
       setSuccess('Transação adicionada com sucesso!');
@@ -170,8 +211,15 @@ function BankTransactions() {
       await loadData();
       
     } catch (error) {
-      setError('Erro ao adicionar transação');
-      console.error('Erro ao adicionar transação:', error);
+      console.error('❌ Erro detalhado ao adicionar transação:', error);
+      if (error.response) {
+        console.error('📡 Resposta do servidor:', error.response.data);
+        setError(`Erro do servidor: ${error.response.data.message || error.response.data.error || 'Erro desconhecido'}`);
+      } else if (error.request) {
+        setError('Erro de conexão. Verifique sua internet.');
+      } else {
+        setError('Erro ao adicionar transação. Tente novamente.');
+      }
     } finally {
       setLoading(false);
     }
