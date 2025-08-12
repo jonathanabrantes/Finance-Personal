@@ -257,6 +257,70 @@ function BankTransactions() {
     }).format(value);
   };
 
+  // Exportar dados para CSV
+  const exportToCSV = () => {
+    if (!transactions || transactions.length === 0) {
+      setError('Não há transações para exportar');
+      return;
+    }
+
+    try {
+      const headers = ['Data', 'Conta', 'Categoria', 'Tipo', 'Valor', 'Descrição'];
+      const csvData = transactions.map(t => [
+        new Date(t.transaction_date).toLocaleDateString('pt-BR'),
+        bankAccounts.find(acc => acc.id === t.bank_account)?.name || 'N/A',
+        categoryGroups.find(cg => cg.id === t.category_group)?.name || 'N/A',
+        t.transaction_type === 'expense' ? 'Despesa' : 'Receita',
+        formatCurrency(t.amount),
+        t.description
+      ]);
+
+      const csvContent = [headers, ...csvData]
+        .map(row => row.map(cell => `"${cell}"`).join(','))
+        .join('\n');
+
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const link = document.createElement('a');
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', `transacoes_${selectedMonth}.csv`);
+      link.style.visibility = 'hidden';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      setSuccess('Dados exportados com sucesso!');
+    } catch (error) {
+      console.error('Erro ao exportar CSV:', error);
+      setError('Erro ao exportar dados');
+    }
+  };
+
+  // Calcular estatísticas adicionais
+  const getTransactionStats = () => {
+    if (!transactions || transactions.length === 0) return null;
+
+    const totalTransactions = transactions.length;
+    const expenses = transactions.filter(t => t.transaction_type === 'expense');
+    const incomes = transactions.filter(t => t.transaction_type === 'income');
+    
+    const avgExpense = expenses.length > 0 
+      ? expenses.reduce((sum, t) => sum + parseFloat(t.amount), 0) / expenses.length 
+      : 0;
+    
+    const avgIncome = incomes.length > 0 
+      ? incomes.reduce((sum, t) => sum + parseFloat(t.amount), 0) / incomes.length 
+      : 0;
+
+    return {
+      totalTransactions,
+      totalExpenses: expenses.length,
+      totalIncomes: incomes.length,
+      avgExpense,
+      avgIncome
+    };
+  };
+
   if (loading) {
     return (
       <div className="container" style={{ paddingTop: '20px' }}>
@@ -284,7 +348,17 @@ function BankTransactions() {
             marginBottom: '30px',
             border: '1px solid var(--border-color)'
           }}>
-            <h3>📊 Resumo do Mês</h3>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+              <h3>📊 Resumo do Mês</h3>
+              <button 
+                onClick={exportToCSV}
+                className="btn btn-secondary"
+                style={{ fontSize: '14px', padding: '8px 16px' }}
+                title="Exportar transações para CSV"
+              >
+                📥 Exportar CSV
+              </button>
+            </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginTop: '15px' }}>
               <div style={{ textAlign: 'center' }}>
                 <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--success-color)' }}>
@@ -313,6 +387,51 @@ function BankTransactions() {
                   {financialSummary.transaction_count}
                 </div>
                 <div style={{ color: 'var(--text-secondary)' }}>Total de Transações</div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Estatísticas Adicionais */}
+        {getTransactionStats() && (
+          <div className="transaction-stats" style={{ 
+            background: 'var(--bg-tertiary)', 
+            padding: '20px', 
+            borderRadius: '10px', 
+            marginBottom: '30px',
+            border: '1px solid var(--border-color)'
+          }}>
+            <h3>📈 Estatísticas do Mês</h3>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '15px', marginTop: '15px' }}>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--accent-color)' }}>
+                  {getTransactionStats().totalTransactions}
+                </div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Total de Transações</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--error-color)' }}>
+                  {getTransactionStats().totalExpenses}
+                </div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Transações de Despesa</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--success-color)' }}>
+                  {getTransactionStats().totalIncomes}
+                </div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Transações de Receita</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--warning-color)' }}>
+                  {formatCurrency(getTransactionStats().avgExpense)}
+                </div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Média de Despesas</div>
+              </div>
+              <div style={{ textAlign: 'center' }}>
+                <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--info-color)' }}>
+                  {formatCurrency(getTransactionStats().avgIncome)}
+                </div>
+                <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Média de Receitas</div>
               </div>
             </div>
           </div>
