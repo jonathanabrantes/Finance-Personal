@@ -125,13 +125,32 @@
   line-height: 1.6;
 }
 
+/* Painel de Ações Rápidas - PARA TODOS OS USUÁRIOS */
+.quick-actions-panel {
+  background: rgba(40, 167, 69, 0.1);
+  border: 1px solid rgba(40, 167, 69, 0.2);
+  border-radius: 10px;
+  padding: 25px;
+  margin-bottom: 30px;
+}
+
+.quick-actions-panel h3 {
+  color: var(--success-color);
+  margin-bottom: 15px;
+}
+
+.quick-actions-panel p {
+  color: var(--text-secondary);
+  margin-bottom: 10px;
+}
+
 /* Admin panel específico */
 .admin-panel {
   background: rgba(77, 171, 247, 0.1);
   border: 1px solid rgba(77, 171, 247, 0.2);
   border-radius: 10px;
   padding: 25px;
-  margin-top: 20px;
+  margin-bottom: 30px;
 }
 
 .admin-panel h3 {
@@ -142,6 +161,79 @@
 .admin-panel p {
   color: var(--text-secondary);
   margin-bottom: 10px;
+}
+
+/* Configurações e Tabs */
+.settings-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 10px;
+}
+
+.tab-button {
+  background: var(--bg-secondary);
+  border: 2px solid var(--border-color);
+  border-radius: 25px;
+  padding: 12px 24px;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 16px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border-bottom: none;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.tab-button:hover {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.tab-button.active {
+  background: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+  border-bottom: 2px solid var(--accent-color);
+  margin-bottom: -2px;
+}
+
+.tab-content {
+  animation: fadeIn 0.3s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.add-form {
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 30px;
+}
+
+.add-form h4 {
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  font-size: 18px;
+}
+
+.items-list, .groups-section {
+  margin-bottom: 30px;
+}
+
+.items-list h4, .groups-section h4 {
+  color: var(--text-primary);
+  margin-bottom: 15px;
+  font-size: 18px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 /* Responsividade */
@@ -159,5 +251,25 @@
   
   .auth-card {
     padding: 30px 20px;
+  }
+
+  .settings-tabs {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .tab-button {
+    border-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  .tab-button.active {
+    border-bottom: 2px solid var(--accent-color);
+    margin-bottom: 0;
+  }
+
+  .quick-actions-panel, .admin-panel {
+    padding: 20px;
   }
 }

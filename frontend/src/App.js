@@ -4,6 +4,8 @@ import Login from './components/Login';
 import Register from './components/Register';
 import Dashboard from './components/Dashboard';
 import UserManagement from './components/UserManagement';
+import Settings from './components/Settings';
+import BankTransactions from './components/BankTransactions';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider, useTheme } from './contexts/ThemeContext';
 import './App.css';
@@ -46,6 +48,22 @@ function AppContent() {
             element={
               <PrivateRoute>
                 <UserManagement />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/settings" 
+            element={
+              <PrivateRoute>
+                <Settings />
+              </PrivateRoute>
+            } 
+          />
+          <Route 
+            path="/transactions" 
+            element={
+              <PrivateRoute>
+                <BankTransactions />
               </PrivateRoute>
             } 
           />
