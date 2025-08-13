@@ -2,32 +2,37 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext();
 
-export function useTheme() {
-  return useContext(ThemeContext);
-}
+export const useTheme = () => {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme deve ser usado dentro de um ThemeProvider');
+  }
+  return context;
+};
 
-export function ThemeProvider({ children }) {
-  const [theme, setTheme] = useState(() => {
-    // Verificar se há tema salvo no localStorage
-    const savedTheme = localStorage.getItem('theme');
-    return savedTheme || 'dark'; // Tema escuro como padrão
-  });
+export const ThemeProvider = ({ children }) => {
+  const [theme, setTheme] = useState('dark');
+  const [themeVariant, setThemeVariant] = useState('default');
 
-  const [themeVariant, setThemeVariant] = useState(() => {
-    // Verificar se há variante de tema salva
-    const savedVariant = localStorage.getItem('themeVariant');
-    return savedVariant || 'default';
-  });
+  // Carregar tema salvo no localStorage
+  useEffect(() => {
+    const savedTheme = localStorage.getItem('theme') || 'dark';
+    const savedVariant = localStorage.getItem('themeVariant') || 'default';
+    setTheme(savedTheme);
+    setThemeVariant(savedVariant);
+  }, []);
 
   // Aplicar tema ao documento
   useEffect(() => {
     document.documentElement.setAttribute('data-theme', theme);
     document.documentElement.setAttribute('data-variant', themeVariant);
+    
+    // Adicionar classe para transições suaves
+    document.body.classList.add('theme-transition');
+    
+    // Salvar no localStorage
     localStorage.setItem('theme', theme);
     localStorage.setItem('themeVariant', themeVariant);
-    
-    // Adicionar classe ao body para transições suaves
-    document.body.classList.add('theme-transition');
     
     // Remover classe após transição
     const timer = setTimeout(() => {
@@ -37,82 +42,61 @@ export function ThemeProvider({ children }) {
     return () => clearTimeout(timer);
   }, [theme, themeVariant]);
 
-  // Função para alternar entre temas claro/escuro
+  // Alternar entre tema claro e escuro
   const toggleTheme = () => {
     setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
   };
 
-  // Função para definir tema específico
+  // Definir tema específico
   const setSpecificTheme = (newTheme) => {
     setTheme(newTheme);
   };
 
-  // Função para alternar variante de tema
+  // Alternar variante de tema
   const toggleThemeVariant = () => {
+    const variants = ['default', 'high-contrast', 'colorblind-friendly', 'retro'];
     setThemeVariant(prevVariant => {
-      const variants = ['default', 'high-contrast', 'colorblind-friendly'];
       const currentIndex = variants.indexOf(prevVariant);
       const nextIndex = (currentIndex + 1) % variants.length;
       return variants[nextIndex];
     });
   };
 
-  // Função para definir variante específica
+  // Definir variante específica
   const setSpecificVariant = (variant) => {
     setThemeVariant(variant);
   };
 
-  // Função para resetar para tema padrão
+  // Resetar para tema padrão
   const resetTheme = () => {
     setTheme('dark');
     setThemeVariant('default');
   };
 
-  // Função para obter informações do tema atual
-  const getThemeInfo = () => {
-    const themeNames = {
-      light: 'Claro',
-      dark: 'Escuro'
-    };
-    
-    const variantNames = {
-      default: 'Padrão',
-      'high-contrast': 'Alto Contraste',
-      'colorblind-friendly': 'Amigável ao Daltonismo'
-    };
+  // Sincronizar com preferência do sistema
+  const syncWithSystem = () => {
+    if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+      setTheme('dark');
+    } else {
+      setTheme('light');
+    }
+  };
 
+  // Verificar se o sistema prefere tema escuro
+  const prefersDarkMode = () => {
+    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  };
+
+  // Obter informações do tema atual
+  const getThemeInfo = () => {
     return {
-      theme: themeNames[theme] || theme,
-      variant: variantNames[themeVariant] || themeVariant,
+      currentTheme: theme,
+      currentVariant: themeVariant,
       isDark: theme === 'dark',
       isLight: theme === 'light',
       hasVariant: themeVariant !== 'default'
     };
   };
-
-  // Função para verificar se o sistema prefere tema escuro
-  const prefersDarkMode = () => {
-    return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-  };
-
-  // Função para sincronizar com preferência do sistema
-  const syncWithSystem = () => {
-    const systemPrefersDark = prefersDarkMode();
-    setTheme(systemPrefersDark ? 'dark' : 'light');
-  };
-
-  // Listener para mudanças na preferência do sistema
-  useEffect(() => {
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (e) => {
-      if (localStorage.getItem('theme') === 'system') {
-        setTheme(e.matches ? 'dark' : 'light');
-      }
-    };
-
-    mediaQuery.addListener(handleChange);
-    return () => mediaQuery.removeListener(handleChange);
-  }, []);
 
   const value = {
     theme,
@@ -122,11 +106,9 @@ export function ThemeProvider({ children }) {
     toggleThemeVariant,
     setSpecificVariant,
     resetTheme,
-    getThemeInfo,
     syncWithSystem,
     prefersDarkMode,
-    isDark: theme === 'dark',
-    isLight: theme === 'light'
+    getThemeInfo
   };
 
   return (
@@ -134,4 +116,4 @@ export function ThemeProvider({ children }) {
       {children}
     </ThemeContext.Provider>
   );
-}
+};

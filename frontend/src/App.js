@@ -1,104 +1,92 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/Login';
-import Register from './components/Register';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import Navbar from './components/Navbar';
 import Dashboard from './components/Dashboard';
-import UserManagement from './components/UserManagement';
-import Settings from './components/Settings';
 import BankTransactions from './components/BankTransactions';
 import Investments from './components/Investments';
-import { AuthProvider, useAuth } from './contexts/AuthContext';
-import { ThemeProvider, useTheme } from './contexts/ThemeContext';
+import Settings from './components/Settings';
 import './App.css';
 
-function ThemeSwitcher() {
-  const { theme, toggleTheme, getThemeInfo, themeVariant, toggleThemeVariant } = useTheme();
-  const themeInfo = getThemeInfo();
-  
+// Componente do Theme Switcher
+const ThemeSwitcher = () => {
+  const { 
+    theme, 
+    themeVariant, 
+    toggleTheme, 
+    toggleThemeVariant, 
+    resetTheme,
+    syncWithSystem
+  } = useTheme();
+
   return (
     <div className="theme-switcher">
       <div className="theme-controls">
-        <button className="theme-toggle" onClick={toggleTheme}>
+        <button 
+          className="theme-toggle"
+          onClick={toggleTheme}
+          title={`Alternar para tema ${theme === 'light' ? 'escuro' : 'claro'}`}
+        >
           {theme === 'light' ? '🌙 Modo Escuro' : '☀️ Modo Claro'}
         </button>
-        {themeVariant !== 'default' && (
-          <button className="theme-variant-toggle" onClick={toggleThemeVariant}>
-            🎨 {themeInfo.variant}
-          </button>
-        )}
+        
+        <button 
+          className="theme-variant-toggle"
+          onClick={toggleThemeVariant}
+          title="Alternar variante de tema"
+        >
+          {themeVariant === 'default' && '🎨 Padrão'}
+          {themeVariant === 'high-contrast' && '⚫ Alto Contraste'}
+          {themeVariant === 'colorblind-friendly' && '🌈 Daltonismo'}
+          {themeVariant === 'retro' && '🕹️ Retro'}
+        </button>
+        
+        <button 
+          className="theme-variant-toggle"
+          onClick={syncWithSystem}
+          title="Sincronizar com sistema"
+        >
+          🔄 Sistema
+        </button>
+        
+        <button 
+          className="theme-variant-toggle"
+          onClick={resetTheme}
+          title="Resetar tema"
+        >
+          🔄 Reset
+        </button>
       </div>
     </div>
   );
-}
+};
 
-function PrivateRoute({ children }) {
-  const { isAuthenticated } = useAuth();
-  return isAuthenticated ? children : <Navigate to="/login" />;
-}
-
-function AppContent() {
+// Componente principal da aplicação
+const AppContent = () => {
   return (
     <Router>
       <div className="App">
+        <Navbar />
         <ThemeSwitcher />
+        
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route 
-            path="/dashboard" 
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/users" 
-            element={
-              <PrivateRoute>
-                <UserManagement />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/settings" 
-            element={
-              <PrivateRoute>
-                <Settings />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/transactions" 
-            element={
-              <PrivateRoute>
-                <BankTransactions />
-              </PrivateRoute>
-            } 
-          />
-          <Route 
-            path="/investments" 
-            element={
-              <PrivateRoute>
-                <Investments />
-              </PrivateRoute>
-            } 
-          />
-          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/transactions" element={<BankTransactions />} />
+          <Route path="/investments" element={<Investments />} />
+          <Route path="/settings" element={<Settings />} />
         </Routes>
       </div>
     </Router>
   );
-}
+};
 
-function App() {
+// App principal com providers
+const App = () => {
   return (
     <ThemeProvider>
-      <AuthProvider>
-        <AppContent />
-      </AuthProvider>
+      <AppContent />
     </ThemeProvider>
   );
-}
+};
 
 export default App;
