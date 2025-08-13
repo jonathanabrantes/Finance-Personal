@@ -332,22 +332,16 @@ function BankTransactions() {
   }
 
   return (
-    <div className="container" style={{ paddingTop: '20px' }}>
+    <div className="container animate-fade-in" style={{ paddingTop: '20px' }}>
       <div className="card">
         <div className="dashboard-header">
           <h1 className="dashboard-title">🏦 Movimentações Bancárias</h1>
-          <p>Controle suas receitas, despesas e saldos bancários</p>
+          <p className="dashboard-subtitle">Controle suas receitas, despesas e saldos bancários</p>
         </div>
 
         {/* Resumo Financeiro */}
         {financialSummary && (
-          <div className="financial-summary" style={{ 
-            background: 'var(--bg-secondary)', 
-            padding: '20px', 
-            borderRadius: '10px', 
-            marginBottom: '30px',
-            border: '1px solid var(--border-color)'
-          }}>
+          <div className="financial-summary">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
               <h3>📊 Resumo do Mês</h3>
               <button 
@@ -359,34 +353,32 @@ function BankTransactions() {
                 📥 Exportar CSV
               </button>
             </div>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginTop: '15px' }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--success-color)' }}>
+            <div className="grid">
+              <div className="stat-item">
+                <div className="stat-value" style={{ color: 'var(--success-color)' }}>
                   {formatCurrency(financialSummary.total_income)}
                 </div>
-                <div style={{ color: 'var(--text-secondary)' }}>Total de Receitas</div>
+                <div className="stat-label">Total de Receitas</div>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--error-color)' }}>
+              <div className="stat-item">
+                <div className="stat-value" style={{ color: 'var(--error-color)' }}>
                   {formatCurrency(financialSummary.total_expense)}
                 </div>
-                <div style={{ color: 'var(--text-secondary)' }}>Total de Despesas</div>
+                <div className="stat-label">Total de Despesas</div>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ 
-                  fontSize: '24px', 
-                  fontWeight: 'bold', 
+              <div className="stat-item">
+                <div className="stat-value" style={{ 
                   color: financialSummary.balance >= 0 ? 'var(--success-color)' : 'var(--error-color)' 
                 }}>
                   {formatCurrency(financialSummary.balance)}
                 </div>
-                <div style={{ color: 'var(--text-secondary)' }}>Saldo do Mês</div>
+                <div className="stat-label">Saldo do Mês</div>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '24px', fontWeight: 'bold', color: 'var(--accent-color)' }}>
+              <div className="stat-item">
+                <div className="stat-value" style={{ color: 'var(--accent-color)' }}>
                   {financialSummary.transaction_count}
                 </div>
-                <div style={{ color: 'var(--text-secondary)' }}>Total de Transações</div>
+                <div className="stat-label">Total de Transações</div>
               </div>
             </div>
           </div>
@@ -394,44 +386,38 @@ function BankTransactions() {
 
         {/* Estatísticas Adicionais */}
         {getTransactionStats() && (
-          <div className="transaction-stats" style={{ 
-            background: 'var(--bg-tertiary)', 
-            padding: '20px', 
-            borderRadius: '10px', 
-            marginBottom: '30px',
-            border: '1px solid var(--border-color)'
-          }}>
+          <div className="transaction-stats">
             <h3>📈 Estatísticas do Mês</h3>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '15px', marginTop: '15px' }}>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--accent-color)' }}>
+            <div className="grid">
+              <div className="stat-item">
+                <div className="stat-value" style={{ color: 'var(--accent-color)' }}>
                   {getTransactionStats().totalTransactions}
                 </div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Total de Transações</div>
+                <div className="stat-label">Total de Transações</div>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--error-color)' }}>
+              <div className="stat-item">
+                <div className="stat-value" style={{ color: 'var(--error-color)' }}>
                   {getTransactionStats().totalExpenses}
                 </div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Transações de Despesa</div>
+                <div className="stat-label">Transações de Despesa</div>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--success-color)' }}>
+              <div className="stat-item">
+                <div className="stat-value" style={{ color: 'var(--success-color)' }}>
                   {getTransactionStats().totalIncomes}
                 </div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Transações de Receita</div>
+                <div className="stat-label">Transações de Receita</div>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--warning-color)' }}>
+              <div className="stat-item">
+                <div className="stat-value" style={{ color: 'var(--warning-color)' }}>
                   {formatCurrency(getTransactionStats().avgExpense)}
                 </div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Média de Despesas</div>
+                <div className="stat-label">Média de Despesas</div>
               </div>
-              <div style={{ textAlign: 'center' }}>
-                <div style={{ fontSize: '20px', fontWeight: 'bold', color: 'var(--info-color)' }}>
+              <div className="stat-item">
+                <div className="stat-value" style={{ color: 'var(--info-color)' }}>
                   {formatCurrency(getTransactionStats().avgIncome)}
                 </div>
-                <div style={{ color: 'var(--text-secondary)', fontSize: '14px' }}>Média de Receitas</div>
+                <div className="stat-label">Média de Receitas</div>
               </div>
             </div>
           </div>
@@ -443,21 +429,8 @@ function BankTransactions() {
           if (expensesData.length === 0) return null;
           
           return (
-            <div className="expenses-chart" style={{ 
-              background: 'var(--card-bg)', 
-              padding: 'var(--spacing-xl)', 
-              borderRadius: 'var(--border-radius-lg)', 
-              marginBottom: 'var(--spacing-xl)',
-              border: '1px solid var(--border-color)',
-              boxShadow: 'var(--shadow-sm)'
-            }}>
-              <h3 style={{ 
-                marginBottom: 'var(--spacing-lg)', 
-                color: 'var(--text-primary)',
-                textAlign: 'center',
-                fontSize: '1.5rem',
-                fontWeight: '600'
-              }}>
+            <div className="expenses-chart">
+              <h3>
                 🥧 Gastos por Categoria - {new Date(selectedMonth + '-01').toLocaleDateString('pt-BR', { month: 'long', year: 'numeric' })}
               </h3>
               
@@ -468,13 +441,8 @@ function BankTransactions() {
                 alignItems: 'center'
               }}>
                 {/* Gráfico de Pizza */}
-                <div className="pie-chart-container" style={{ textAlign: 'center' }}>
+                <div className="pie-chart-container">
                   <div className="pie-chart" style={{ 
-                    width: '300px', 
-                    height: '300px', 
-                    margin: '0 auto',
-                    position: 'relative',
-                    borderRadius: '50%',
                     background: 'conic-gradient(' + 
                       expensesData.map((item, index) => {
                         const startAngle = expensesData
@@ -510,88 +478,20 @@ function BankTransactions() {
                 
                 {/* Legenda e Estatísticas */}
                 <div className="chart-legend">
-                  <div style={{ 
-                    display: 'grid', 
-                    gridTemplateColumns: '1fr', 
-                    gap: 'var(--spacing-sm)',
-                    maxHeight: '300px',
-                    overflowY: 'auto'
-                  }}>
-                    {expensesData.map((item, index) => (
-                      <div key={index} style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: 'var(--spacing-sm)',
-                        padding: 'var(--spacing-sm)',
-                        background: 'var(--bg-secondary)',
-                        borderRadius: 'var(--border-radius-md)',
-                        border: '1px solid var(--border-color)',
-                        transition: 'var(--transition-normal)'
-                      }}>
-                        {/* Indicador de cor */}
-                        <div style={{
-                          width: '20px',
-                          height: '20px',
-                          backgroundColor: item.color,
-                          borderRadius: '50%',
-                          border: '2px solid var(--border-color)'
-                        }} />
-                        
-                        {/* Informações da categoria */}
-                        <div style={{ flex: 1 }}>
-                          <div style={{
-                            fontWeight: '600',
-                            color: 'var(--text-primary)',
-                            fontSize: '0.9rem'
-                          }}>
-                            {item.category}
-                          </div>
-                          <div style={{
-                            color: 'var(--text-secondary)',
-                            fontSize: '0.8rem'
-                          }}>
-                            {item.percentage.toFixed(1)}% • {formatCurrency(item.amount)}
-                          </div>
-                        </div>
-                        
-                        {/* Percentual destacado */}
-                        <div style={{
-                          fontWeight: 'bold',
-                          color: 'var(--text-primary)',
-                          fontSize: '1.1rem',
-                          minWidth: '50px',
-                          textAlign: 'right'
-                        }}>
-                          {item.percentage.toFixed(1)}%
-                        </div>
+                  {expensesData.map((item, index) => (
+                    <div key={index} className="legend-item">
+                      {/* Indicador de cor */}
+                      <div className="color-indicator" style={{ backgroundColor: item.color }}></div>
+                      
+                      {/* Texto da legenda */}
+                      <div className="legend-text">{item.category}</div>
+                      
+                      {/* Percentual */}
+                      <div className="legend-percentage">
+                        {item.percentage.toFixed(1)}%
                       </div>
-                    ))}
-                  </div>
-                  
-                  {/* Total de despesas */}
-                  <div style={{
-                    marginTop: 'var(--spacing-lg)',
-                    padding: 'var(--spacing-md)',
-                    background: 'var(--accent-light)',
-                    borderRadius: 'var(--border-radius-md)',
-                    border: '2px solid var(--accent-color)',
-                    textAlign: 'center'
-                  }}>
-                    <div style={{
-                      fontSize: '1.2rem',
-                      fontWeight: 'bold',
-                      color: 'var(--accent-color)'
-                    }}>
-                      Total de Despesas
                     </div>
-                    <div style={{
-                      fontSize: '1.8rem',
-                      fontWeight: 'bold',
-                      color: 'var(--text-primary)'
-                    }}>
-                      {formatCurrency(expensesData.reduce((sum, item) => sum + item.amount, 0))}
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
@@ -599,131 +499,224 @@ function BankTransactions() {
         })()}
 
         {/* Filtros */}
-        <div className="filters" style={{ marginBottom: '30px' }}>
-          <h3>🔍 Filtros</h3>
-          <div style={{ display: 'flex', gap: '20px', flexWrap: 'wrap', alignItems: 'center' }}>
-            <div>
-              <label style={{ display: 'block', marginBottom: '5px', color: 'var(--text-primary)' }}>
-                Mês/Ano:
-              </label>
-              <select
-                value={selectedMonth}
-                onChange={(e) => setSelectedMonth(e.target.value)}
-                style={{ padding: '8px', borderRadius: '5px', border: '1px solid var(--border-color)' }}
-              >
-                {generateMonthOptions().map(month => (
-                  <option key={month.value} value={month.value}>
-                    {month.label}
-                  </option>
-                ))}
-              </select>
-            </div>
-            
-            <div>
-              <label style={{ display: 'block', marginBottom: '5px', color: 'var(--text-primary)' }}>
-                Conta Bancária:
-              </label>
-              <select
-                value={selectedAccount}
-                onChange={(e) => setSelectedAccount(e.target.value)}
-                style={{ padding: '8px', borderRadius: '5px', border: '1px solid var(--border-color)' }}
-              >
-                <option value="all">Todas as Contas</option>
-                {bankAccounts.map(account => (
-                  <option key={account.id} value={account.id}>
-                    {account.name} - {formatCurrency(account.current_balance)}
-                  </option>
-                ))}
-              </select>
-            </div>
+        <div className="card-header">
+          <h3 className="card-title">🔍 Filtros</h3>
+          <p className="card-subtitle">Configure os filtros para visualizar suas transações</p>
+        </div>
+
+        <div style={{ 
+          display: 'grid', 
+          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
+          gap: 'var(--spacing-lg)',
+          marginBottom: 'var(--spacing-xl)'
+        }}>
+          <div className="form-group">
+            <label>Mês/Ano:</label>
+            <select 
+              value={selectedMonth} 
+              onChange={(e) => setSelectedMonth(e.target.value)}
+              className="form-control"
+            >
+              {generateMonthOptions().map(month => (
+                <option key={month.value} value={month.value}>
+                  {month.label}
+                </option>
+              ))}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Conta Bancária:</label>
+            <select 
+              value={selectedAccount} 
+              onChange={(e) => setSelectedAccount(e.target.value)}
+              className="form-control"
+            >
+              <option value="all">Todas as Contas</option>
+              {bankAccounts.map(account => (
+                <option key={account.id} value={account.id}>
+                  {account.name} - {formatCurrency(account.balance)}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
-        {/* Tabs de Navegação */}
-        <div className="settings-tabs">
+        {/* Tabs */}
+        <div className="tabs">
           <button 
-            className={`tab-button ${activeTab === 'transactions' ? 'active' : ''}`}
-            onClick={() => setActiveTab('transactions')}
+            className={`tab ${activeTab === 'new' ? 'active' : ''}`}
+            onClick={() => setActiveTab('new')}
+          >
+            ✨ Nova Transação
+          </button>
+          <button 
+            className={`tab ${activeTab === 'history' ? 'active' : ''}`}
+            onClick={() => setActiveTab('history')}
           >
             📋 Histórico de Transações
           </button>
-          <button 
-            className={`tab-button ${activeTab === 'new-transaction' ? 'active' : ''}`}
-            onClick={() => setActiveTab('new-transaction')}
-          >
-            ➕ Nova Transação
-          </button>
         </div>
 
-        {/* Conteúdo das Tabs */}
-        {activeTab === 'transactions' && (
-          <div className="tab-content">
-            <h3>📋 Histórico de Transações</h3>
-            <p>Visualize todas as suas movimentações bancárias do mês selecionado.</p>
-            
+        {/* Nova Transação */}
+        {activeTab === 'new' && (
+          <div className="animate-slide-up">
+            <div className="card-header">
+              <h3 className="card-title">+ Nova Transação</h3>
+              <p className="card-subtitle">Adicione uma nova movimentação bancária ao seu histórico</p>
+            </div>
+
+            <form onSubmit={addTransaction} className="form-grid">
+              <div className="form-group">
+                <label>CONTA BANCÁRIA:</label>
+                <select 
+                  value={newTransaction.bank_account} 
+                  onChange={(e) => setNewTransaction({...newTransaction, bank_account: e.target.value})}
+                  required
+                  className="form-control"
+                >
+                  <option value="">Selecione uma conta</option>
+                  {bankAccounts.map(account => (
+                    <option key={account.id} value={account.id}>
+                      {account.name} - {formatCurrency(account.balance)}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>GRUPO DE CATEGORIA:</label>
+                <select 
+                  value={newTransaction.category_group} 
+                  onChange={(e) => setNewTransaction({...newTransaction, category_group: e.target.value})}
+                  required
+                  className="form-control"
+                >
+                  <option value="">Selecione uma categoria</option>
+                  {categoryGroups.map(group => (
+                    <option key={group.id} value={group.id}>
+                      {group.name} ({group.transaction_type === 'expense' ? 'Despesa' : 'Receita'})
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label>VALOR:</label>
+                <input 
+                  type="number" 
+                  step="0.01" 
+                  value={newTransaction.amount} 
+                  onChange={(e) => setNewTransaction({...newTransaction, amount: e.target.value})}
+                  placeholder="0,00"
+                  required
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group">
+                <label>DATA DA TRANSAÇÃO:</label>
+                <input 
+                  type="date" 
+                  value={newTransaction.transaction_date} 
+                  onChange={(e) => setNewTransaction({...newTransaction, transaction_date: e.target.value})}
+                  required
+                  className="form-control"
+                />
+              </div>
+
+              <div className="form-group" style={{ gridColumn: '1 / -1' }}>
+                <label>DESCRIÇÃO:</label>
+                <input 
+                  type="text" 
+                  value={newTransaction.description} 
+                  onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
+                  placeholder="Descrição da transação"
+                  required
+                  className="form-control"
+                />
+              </div>
+
+              <div style={{ gridColumn: '1 / -1', textAlign: 'center', marginTop: 'var(--spacing-lg)' }}>
+                <button type="submit" className="btn btn-primary" disabled={loading}>
+                  {loading ? (
+                    <>
+                      <span className="loading-spinner"></span>
+                      Adicionando...
+                    </>
+                  ) : (
+                    'Adicionar Transação'
+                  )}
+                </button>
+              </div>
+            </form>
+          </div>
+        )}
+
+        {/* Histórico de Transações */}
+        {activeTab === 'history' && (
+          <div className="animate-slide-up">
+            <div className="card-header">
+              <h3 className="card-title">📋 Histórico de Transações</h3>
+              <p className="card-subtitle">Visualize e gerencie todas as suas transações</p>
+            </div>
+
             {filteredTransactions.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '40px', color: 'var(--text-secondary)' }}>
-                <p>Nenhuma transação encontrada para este período.</p>
+              <div className="text-center" style={{ padding: 'var(--spacing-3xl)' }}>
+                <div style={{ fontSize: '4rem', marginBottom: 'var(--spacing-lg)' }}>📭</div>
+                <h3 style={{ color: 'var(--text-secondary)', marginBottom: 'var(--spacing-md)' }}>
+                  Nenhuma transação encontrada
+                </h3>
+                <p style={{ color: 'var(--text-muted)' }}>
+                  Não há transações para o período e conta selecionados.
+                </p>
               </div>
             ) : (
-              <div className="table-responsive">
+              <div className="table-container">
                 <table className="table">
                   <thead>
                     <tr>
                       <th>Data</th>
-                      <th>Descrição</th>
                       <th>Conta</th>
                       <th>Categoria</th>
+                      <th>Tipo</th>
                       <th>Valor</th>
+                      <th>Descrição</th>
                       <th>Ações</th>
                     </tr>
                   </thead>
                   <tbody>
                     {filteredTransactions.map(transaction => (
                       <tr key={transaction.id}>
-                        <td>{transaction.formatted_date}</td>
-                        <td>{transaction.description}</td>
                         <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div 
-                              style={{ 
-                                width: '12px', 
-                                height: '12px', 
-                                backgroundColor: transaction.bank_account_color || '#0066CC', 
-                                borderRadius: '50%' 
-                              }}
-                            />
-                            {transaction.bank_account_name}
-                          </div>
+                          {new Date(transaction.transaction_date).toLocaleDateString('pt-BR')}
                         </td>
                         <td>
-                          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                            <div 
-                              style={{ 
-                                width: '12px', 
-                                height: '12px', 
-                                backgroundColor: transaction.category_group_color || '#0066CC', 
-                                borderRadius: '50%' 
-                              }}
-                            />
-                            {transaction.category_group_name}
-                          </div>
+                          {bankAccounts.find(acc => acc.id === transaction.bank_account)?.name || 'N/A'}
                         </td>
                         <td>
-                          <span style={{ 
-                            color: transaction.transaction_type === 'income' ? 'var(--success-color)' : 'var(--error-color)',
-                            fontWeight: 'bold'
-                          }}>
-                            {transaction.formatted_amount}
+                          {categoryGroups.find(cg => cg.id === transaction.category_group)?.name || 'N/A'}
+                        </td>
+                        <td>
+                          <span className={`badge badge-${transaction.transaction_type === 'expense' ? 'error' : 'success'}`}>
+                            {transaction.transaction_type === 'expense' ? 'Despesa' : 'Receita'}
                           </span>
                         </td>
+                        <td style={{ 
+                          color: transaction.transaction_type === 'expense' ? 'var(--error-color)' : 'var(--success-color)',
+                          fontWeight: 'bold'
+                        }}>
+                          {formatCurrency(transaction.amount)}
+                        </td>
+                        <td>{transaction.description}</td>
                         <td>
-                          <button
-                            className="btn btn-danger"
-                            style={{ padding: '5px 10px', fontSize: '12px' }}
+                          <button 
                             onClick={() => deleteTransaction(transaction.id)}
+                            className="btn btn-danger"
+                            style={{ padding: 'var(--spacing-sm)', fontSize: 'var(--font-size-sm)' }}
+                            title="Excluir transação"
                           >
-                            Excluir
+                            🗑️
                           </button>
                         </td>
                       </tr>
@@ -735,94 +728,18 @@ function BankTransactions() {
           </div>
         )}
 
-        {activeTab === 'new-transaction' && (
-          <div className="tab-content">
-            <h3>➕ Nova Transação</h3>
-            <p>Adicione uma nova movimentação bancária ao seu histórico.</p>
-            
-            <div className="add-form">
-              <form onSubmit={addTransaction}>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '20px' }}>
-                  <div className="form-group">
-                    <label>Conta Bancária:</label>
-                    <select
-                      value={newTransaction.bank_account}
-                      onChange={(e) => setNewTransaction({...newTransaction, bank_account: e.target.value})}
-                      required
-                    >
-                      <option value="">Selecione uma conta</option>
-                      {bankAccounts.map(account => (
-                        <option key={account.id} value={account.id}>
-                          {account.name} - {formatCurrency(account.current_balance)}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Grupo de Categoria:</label>
-                    <select
-                      value={newTransaction.category_group}
-                      onChange={(e) => setNewTransaction({...newTransaction, category_group: e.target.value})}
-                      required
-                    >
-                      <option value="">Selecione uma categoria</option>
-                      {categoryGroups.map(group => (
-                        <option key={group.id} value={group.id}>
-                          {group.name} ({group.transaction_type_display})
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <label>Valor:</label>
-                    <input
-                      type="number"
-                      step="0.01"
-                      min="0.01"
-                      value={newTransaction.amount}
-                      onChange={(e) => setNewTransaction({...newTransaction, amount: e.target.value})}
-                      placeholder="0,00"
-                      required
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label>Data da Transação:</label>
-                    <input
-                      type="date"
-                      value={newTransaction.transaction_date}
-                      onChange={(e) => setNewTransaction({...newTransaction, transaction_date: e.target.value})}
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="form-group" style={{ marginTop: '20px' }}>
-                  <label>Descrição:</label>
-                  <input
-                    type="text"
-                    value={newTransaction.description}
-                    onChange={(e) => setNewTransaction({...newTransaction, description: e.target.value})}
-                    placeholder="Ex: Salário, Aluguel, Supermercado..."
-                    required
-                  />
-                </div>
-
-                <div style={{ marginTop: '20px' }}>
-                  <button type="submit" className="btn btn-primary" disabled={loading}>
-                    {loading ? 'Adicionando...' : 'Adicionar Transação'}
-                  </button>
-                </div>
-              </form>
-            </div>
+        {/* Mensagens de Feedback */}
+        {error && (
+          <div className="alert alert-error">
+            ❌ {error}
           </div>
         )}
 
-        {/* Mensagens de erro e sucesso */}
-        {error && <div className="error-message">{error}</div>}
-        {success && <div className="success-message">{success}</div>}
+        {success && (
+          <div className="alert alert-success">
+            ✅ {success}
+          </div>
+        )}
       </div>
     </div>
   );
